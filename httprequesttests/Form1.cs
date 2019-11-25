@@ -110,6 +110,7 @@ namespace httprequesttests
         private void button_WebClient_Login_Click(object sender, EventArgs e)
         {
             client = new CookieAwareWebClient();
+            client.Encoding = Encoding.UTF8;
             client.BaseAddress = myBaseURL;
             var loginData = new System.Collections.Specialized.NameValueCollection();
             loginData.Add("username", myUsername);
@@ -126,28 +127,29 @@ namespace httprequesttests
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(page);
 
-            var rows = doc.DocumentNode.SelectSingleNode("//tbody").Descendants("tr");
+            var TDs = doc.DocumentNode.SelectSingleNode("//tbody").Descendants("tr")
+            .Where(tr => tr.Elements("td").Count() > 1)
+            .Select(tr => tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
+            .ToList();
 
-            foreach (HtmlNode col in doc.DocumentNode.SelectNodes("//table[@id='table2']//tr//td"))
+            foreach(List<string> Rows in TDs)
             {
-                if (DG1.Rows.Count == 0)
-                {
-                DG1.Rows.Add;
 
-                }
-                DataGridViewCell newcell = new DataGridViewCell();
-                DG1.Rows[DG1.Rows.Count-1].Cells.Add()
+                string name = Rows[2];
+                string number = Rows[3];
+                string views = Rows[8];
+                string sells = Rows[9];
+                string wishlists = Rows[13];
+                string ratings = Rows[15];
+
+                name = name.Substring(0, name.IndexOf("\r\n"));
+                               
+                DG1.Rows.Add(name,number,views,sells,wishlists,ratings);
+                                
+
             }
-                    
-                    //Response.Write(col.InnerText);
 
-            //List<List<string>> table = doc.DocumentNode.SelectSingleNode("tbody")
-            //            .Descendants("tr")
-            //            .Skip(1)
-            //            .Where(tr => tr.Elements("td").Count() > 1)
-            //            .Select(tr => tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
-            //            .ToList();
-            //MessageBox.Show("done...");
+
 
 
         }

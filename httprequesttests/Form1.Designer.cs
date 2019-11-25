@@ -37,6 +37,12 @@
             this.button_Webclient_Request = new System.Windows.Forms.Button();
             this.textBox_BaseURL = new System.Windows.Forms.TextBox();
             this.DG1 = new System.Windows.Forms.DataGridView();
+            this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.number = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.views = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sells = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.wishlists = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ratings = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.DG1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -122,10 +128,47 @@
             // DG1
             // 
             this.DG1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.DG1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.name,
+            this.number,
+            this.views,
+            this.sells,
+            this.wishlists,
+            this.ratings});
             this.DG1.Location = new System.Drawing.Point(12, 361);
             this.DG1.Name = "DG1";
             this.DG1.Size = new System.Drawing.Size(1104, 309);
             this.DG1.TabIndex = 4;
+            // 
+            // name
+            // 
+            this.name.HeaderText = "Name";
+            this.name.Name = "name";
+            // 
+            // number
+            // 
+            this.number.HeaderText = "#";
+            this.number.Name = "number";
+            // 
+            // views
+            // 
+            this.views.HeaderText = "Views";
+            this.views.Name = "views";
+            // 
+            // sells
+            // 
+            this.sells.HeaderText = "Verk.";
+            this.sells.Name = "sells";
+            // 
+            // wishlists
+            // 
+            this.wishlists.HeaderText = "WL";
+            this.wishlists.Name = "wishlists";
+            // 
+            // ratings
+            // 
+            this.ratings.HeaderText = "Bew.";
+            this.ratings.Name = "ratings";
             // 
             // Form1
             // 
@@ -161,6 +204,12 @@
         private System.Windows.Forms.Button button_Webclient_Request;
         private System.Windows.Forms.TextBox textBox_BaseURL;
         private System.Windows.Forms.DataGridView DG1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn name;
+        private System.Windows.Forms.DataGridViewTextBoxColumn number;
+        private System.Windows.Forms.DataGridViewTextBoxColumn views;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sells;
+        private System.Windows.Forms.DataGridViewTextBoxColumn wishlists;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ratings;
     }
 }
 
