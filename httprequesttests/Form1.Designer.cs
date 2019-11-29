@@ -32,8 +32,6 @@
             this.textBox_response = new System.Windows.Forms.TextBox();
             this.button_Webclient_Request = new System.Windows.Forms.Button();
             this.DG1 = new System.Windows.Forms.DataGridView();
-            this.button_Timer_Toggle = new System.Windows.Forms.Button();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.number = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.views = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -41,6 +39,9 @@
             this.wishlists = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ratings = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Durchschnitt = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button_Timer_Toggle = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.textBox_Alerts = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.DG1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -82,15 +83,6 @@
             this.DG1.RowHeadersVisible = false;
             this.DG1.Size = new System.Drawing.Size(570, 634);
             this.DG1.TabIndex = 4;
-            // 
-            // button_Timer_Toggle
-            // 
-            this.button_Timer_Toggle.Location = new System.Drawing.Point(128, 7);
-            this.button_Timer_Toggle.Name = "button_Timer_Toggle";
-            this.button_Timer_Toggle.Size = new System.Drawing.Size(75, 23);
-            this.button_Timer_Toggle.TabIndex = 5;
-            this.button_Timer_Toggle.Text = "Activate Tracking";
-            this.button_Timer_Toggle.UseVisualStyleBackColor = true;
             // 
             // number
             // 
@@ -141,11 +133,35 @@
             this.Durchschnitt.ReadOnly = true;
             this.Durchschnitt.Width = 40;
             // 
+            // button_Timer_Toggle
+            // 
+            this.button_Timer_Toggle.Location = new System.Drawing.Point(128, 7);
+            this.button_Timer_Toggle.Name = "button_Timer_Toggle";
+            this.button_Timer_Toggle.Size = new System.Drawing.Size(59, 23);
+            this.button_Timer_Toggle.TabIndex = 5;
+            this.button_Timer_Toggle.Text = "Activate Tracking";
+            this.button_Timer_Toggle.UseVisualStyleBackColor = true;
+            this.button_Timer_Toggle.Click += new System.EventHandler(this.button_Timer_Toggle_Click);
+            // 
+            // timer1
+            // 
+            this.timer1.Interval = 10000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            // 
+            // textBox_Alerts
+            // 
+            this.textBox_Alerts.Location = new System.Drawing.Point(12, 676);
+            this.textBox_Alerts.Multiline = true;
+            this.textBox_Alerts.Name = "textBox_Alerts";
+            this.textBox_Alerts.Size = new System.Drawing.Size(570, 106);
+            this.textBox_Alerts.TabIndex = 6;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(594, 682);
+            this.ClientSize = new System.Drawing.Size(594, 794);
+            this.Controls.Add(this.textBox_Alerts);
             this.Controls.Add(this.button_Timer_Toggle);
             this.Controls.Add(this.DG1);
             this.Controls.Add(this.button_Webclient_Request);
@@ -173,6 +189,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn wishlists;
         private System.Windows.Forms.DataGridViewTextBoxColumn ratings;
         private System.Windows.Forms.DataGridViewTextBoxColumn Durchschnitt;
+        private System.Windows.Forms.TextBox textBox_Alerts;
     }
 }
 
