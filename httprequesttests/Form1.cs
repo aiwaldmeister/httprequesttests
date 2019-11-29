@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using HtmlAgilityPack;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace httprequesttests
 {
@@ -21,20 +22,29 @@ namespace httprequesttests
         CookieAwareWebClient client = new CookieAwareWebClient();
         List<patterndata> referencepatdataList = new List<patterndata>();
         List<patterndata> currentpatdataList = new List<patterndata>();
-        accountdata referenceaccdata;
-        accountdata newaccdata;
+        headerdata referenceaccdata;
+        headerdata newaccdata;
 
 
+
+        [XmlRootAttribute(Namespace = "", IsNullable = false)]
         public class accountdata
         {
-            public string balance;
-            public string followers;
-            public string sells;
-            public string ratings;
-            public string comments;
-            public string messages;
+            headerdata header { get; set; }
+            List<patterndata> patterns { get; set; }
+        }
 
-            public accountdata(string balance, string followers, string sells, string ratings, string comments, string messages)
+        [XmlTypeAttribute(AnonymousType = true)]
+        public class headerdata
+        {
+            public string balance { get; set; }
+            public string followers { get; set; }
+            public string sells { get; set; }
+            public string ratings { get; set; }
+            public string comments { get; set; }
+            public string messages { get; set; }
+
+            public headerdata(string balance, string followers, string sells, string ratings, string comments, string messages)
             {
                 this.balance = balance;
                 this.followers = followers;
@@ -43,30 +53,19 @@ namespace httprequesttests
                 this.comments = comments;
                 this.messages = messages;
             }
-            public List<String> getData()
-            {
-                var retlist = new List<string>();
-                retlist.Add(this.balance);
-                retlist.Add(this.followers);
-                retlist.Add(this.sells);
-                retlist.Add(this.ratings);
-                retlist.Add(this.comments);
-                retlist.Add(this.messages);
-                
-                return retlist;
-            }
-
+           
         }
 
+        [XmlTypeAttribute(AnonymousType = true)]
         public class patterndata
         {
-            public string number;
-            public string name;
-            public string views;
-            public string sells;
-            public string wishlists;
-            public string ratings;
-            public string score;
+            public string number { get; set; }
+            public string name { get; set; }
+            public string views { get; set; }
+            public string sells { get; set; }
+            public string wishlists { get; set; }
+            public string ratings { get; set; }
+            public string score { get; set; }
 
             public patterndata(string number, string name, string views, string sells, string wishlists, string ratings, string score)
             {
@@ -78,21 +77,43 @@ namespace httprequesttests
                 this.ratings = ratings;
                 this.score = score;
             }
+        }
 
-            public List<String> getData()
+        public static accountdata Loadaccountdata(string configFile)
+        {
+            try
             {
-                var retlist = new List<string>();
-                retlist.Add(this.number);
-                retlist.Add(this.name);
-                retlist.Add(this.views);
-                retlist.Add(this.sells);
-                retlist.Add(this.wishlists);
-                retlist.Add(this.ratings);
-                retlist.Add(this.score);
-                
-                return retlist;
+                using (StreamReader reader = new StreamReader(configFile))
+                {
+                    var deserializer = new XmlSerializer(typeof(Configuration));
+                    return (Configuration)deserializer.Deserialize(reader);
+                }
+            }
+            catch (IOException)
+            {
+                // it's good to catch IOException in case the file is unavailable. 
+                // Optionally write some code to get a default or otherwise
+                // handle the exception
+                return new accountdata();
             }
         }
+
+
+        public static void SaveConfiguration<T>(T toSerialize, string configFile)
+        {
+            XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
+            using (TextWriter textWriter = new StreamWriter(configFile))
+            {
+                xmlSerializer.Serialize(textWriter, toSerialize);
+            }
+        }
+
+//       Player player1 = ConfigurationLoader.LoadPlayer("\\path\to\file.xml")
+//        //do something with player
+//        // and save it back
+//        ConfigurationLoader.SaveConfiguration<Player>(player1);
+
+
 
         public class CookieAwareWebClient : WebClient
         {
