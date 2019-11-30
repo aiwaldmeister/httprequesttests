@@ -162,6 +162,10 @@ namespace httprequesttests
         {
             myPW = ConfigurationManager.AppSettings["myPW"];
             myUsername = ConfigurationManager.AppSettings["myUsername"];
+            int intervall = 10000;
+            Int32.TryParse(ConfigurationManager.AppSettings["intervall"], out intervall);
+            trackBar1.Value = intervall;
+            timer1.Interval = intervall;
 
             if (ConfigurationManager.AppSettings["logViews"] =="1")
             {
@@ -191,6 +195,10 @@ namespace httprequesttests
             referenceheaderdata = referenceaccountdata.header;
 
             showdata(referenceheaderdata,referencepatdataList);
+
+            timer1.Enabled = true;
+            button_Timer_Toggle.Text = "Stop Tracking";
+            refresh();
 
         }
 
@@ -429,7 +437,7 @@ namespace httprequesttests
         private void button_DisposeAlerts_Click(object sender, EventArgs e)
         {
             
-            showNotification(new notification("123456","asdf","asdfasdf"));
+            showNotification(new notification("10000","asdf","asdfasdf"));
             //ToastNotificationManager.CreateToastNotifier("MyApplicationId").Show(toast);
         }
 
@@ -444,7 +452,9 @@ namespace httprequesttests
 
         private void showNotification(notification notification)
         {
-            notifyIcon1.ShowBalloonTip(3000, "Heureka!", notification.message, ToolTipIcon.Info);
+            notifyIcon1.Icon = System.Drawing.SystemIcons.Information;
+            notifyIcon1.Visible = true;
+            notifyIcon1.ShowBalloonTip(10000, "Heureka!", notification.message, ToolTipIcon.Info);
 
         }
 
@@ -488,6 +498,53 @@ namespace httprequesttests
             config.AppSettings.Settings.Remove(key);
             config.AppSettings.Settings.Add(key, value);
             config.Save(ConfigurationSaveMode.Modified);
+        }
+
+        private void notifyIcon1_Click(object sender, EventArgs e)
+        {
+            contextMenu.Show(Cursor.Position);
+        }
+
+        private void showToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //this.Visible = true;
+            this.WindowState = FormWindowState.Normal;
+        }
+
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized)
+            {
+                this.Show();
+                this.WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                this.Hide();
+                this.WindowState = FormWindowState.Minimized;
+            }
+
+        }
+
+        private void abbrechenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            contextMenu.Hide();
+        }
+
+        private void trackBar1_Scroll(object sender, EventArgs e)
+        {
+        }
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            setConfigValue("intervall", trackBar1.Value.ToString());
+            timer1.Interval = trackBar1.Value;
+
         }
     }
 }           
