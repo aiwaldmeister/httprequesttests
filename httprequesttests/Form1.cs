@@ -22,6 +22,7 @@ namespace httprequesttests
         string myDashboardPage = "users/dashboard";
         bool notifyViews = true;
         bool logViews = true;
+        bool preventFormClosing = true;
         CookieAwareWebClient client = new CookieAwareWebClient();
         List<patterndata> referencepatdataList = new List<patterndata>();
         List<patterndata> currentpatdataList = new List<patterndata>();
@@ -205,13 +206,10 @@ namespace httprequesttests
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            saveStatetoXML(new accountdata(new headerdata(), referencepatdataList));
+            this.WindowState = FormWindowState.Minimized;
+            e.Cancel= preventFormClosing;
+            preventFormClosing = true;
 
-            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
-            //config.AppSettings.Settings.Remove("myCookie");
-            //config.AppSettings.Settings.Add("myCookie", myCookie);
-            config.Save(ConfigurationSaveMode.Minimal);
-            
         }
 
         private bool login()
@@ -252,12 +250,14 @@ namespace httprequesttests
             if (client.cookie.Count == 7) //bei erfolgreichem Login sollten 7 Cookies gesetzt sein, sonst nur 0-4 -> prüfbar über die auskommentierten msg in der login methode
             {
                 this.Text = "CrazyPatterns Event-Tracker... Angemeldet als " + myUsername;
+                notifyIcon1.Text = "Angemeldet als " + myUsername;
                 return true;
 
             }
             else
             {
                 this.Text = "CrazyPatterns Event-Tracker... OFfline";
+                notifyIcon1.Text = "Offline";
                 return false;
                 
             }
@@ -346,31 +346,31 @@ namespace httprequesttests
                     if (n.number.CompareTo(o.number)==0)
                     {//found the matching pattern in the List, now we can copare values
 
-                        if (n.name.CompareTo(o.name)!=0)
+                        if (n.name.Equals(o.name)!=true)
                         {
                             AddAlert(Timestamp(), "name", "Der name von Pattern '" + o.name + "' wurde zu '" + n.name + "' geändert.");
                             changeshappened = true;
                         }
 
-                        if (n.views.CompareTo(o.views)!=0)
+                        if (n.views.Equals(o.views)!= true)
                         {
                             AddAlert(Timestamp(), "views", "Die Anzahl der Views auf " + n.name + " ist von " + o.views + " auf " + n.views + " gestiegen.");
                             changeshappened = true;
                         }
 
-                        if (n.views.CompareTo(o.views) != 0)
+                        if (n.sells.Equals(o.sells) != true)
                         {
                             AddAlert(Timestamp(), "sells", "Die Anzahl der Verkäufe auf " + n.name + " ist von " + o.sells + " auf " + n.sells + " gestiegen.");
                             changeshappened = true;
                         }
 
-                        if (n.views.CompareTo(o.views) != 0)
+                        if (n.wishlists.Equals(o.wishlists) != true)
                         {
                             AddAlert(Timestamp(), "wishlists", "Die Anzahl der Wunschlisten auf " + n.name + " hat sich von " + o.wishlists + " auf " + n.wishlists + " geändert.");
                             changeshappened = true;
                         }
 
-                        if (n.views.CompareTo(o.views) != 0)
+                        if (n.ratings.Equals(o.ratings) != true)
                         {
                             AddAlert(Timestamp(), "score", "Die Anzahl der Bewertungen auf " + n.name + " ist von " + o.ratings + " auf " + n.ratings + " gestiegen. (Neuer Schnitt ist "  + n.score + ")");
                             changeshappened = true;
@@ -387,6 +387,8 @@ namespace httprequesttests
         {
             //MessageBox.Show(message);
             //TODO Akustisches Signal abhängig von type des Alerts
+
+            notificationQueue.Add(new notification(timestamp, type, message));
 
             //Ausgabe in der Textbox
             textBox_Alerts.AppendText(timestamp + ": " + message + Environment.NewLine);
@@ -436,13 +438,16 @@ namespace httprequesttests
 
         private void button_DisposeAlerts_Click(object sender, EventArgs e)
         {
-            
-            showNotification(new notification("10000","asdf","asdfasdf"));
+            textBox_Alerts.Clear();
+            notificationQueue.Add(new notification("10000", "asdf", "asdfasdf"));
+            //showNotification(new notification("10000","asdf","asdfasdf"));
             //ToastNotificationManager.CreateToastNotifier("MyApplicationId").Show(toast);
         }
 
         private void showNotificationfromQueue()
         {
+            
+
             if (notificationQueue.Count > 0)
             {
                 showNotification(notificationQueue.Last());
@@ -452,9 +457,14 @@ namespace httprequesttests
 
         private void showNotification(notification notification)
         {
-            notifyIcon1.Icon = System.Drawing.SystemIcons.Information;
             notifyIcon1.Visible = true;
+            notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
+
+            //notifyIcon1.ShowBalloonTip();
+
             notifyIcon1.ShowBalloonTip(10000, "Heureka!", notification.message, ToolTipIcon.Info);
+
+   
 
         }
 
@@ -500,10 +510,7 @@ namespace httprequesttests
             config.Save(ConfigurationSaveMode.Modified);
         }
 
-        private void notifyIcon1_Click(object sender, EventArgs e)
-        {
-            contextMenu.Show(Cursor.Position);
-        }
+
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -513,23 +520,10 @@ namespace httprequesttests
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            preventFormClosing = false;
             this.Close();
         }
 
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (this.WindowState == FormWindowState.Minimized)
-            {
-                this.Show();
-                this.WindowState = FormWindowState.Normal;
-            }
-            else
-            {
-                this.Hide();
-                this.WindowState = FormWindowState.Minimized;
-            }
-
-        }
 
         private void abbrechenToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -544,6 +538,43 @@ namespace httprequesttests
         {
             setConfigValue("intervall", trackBar1.Value.ToString());
             timer1.Interval = trackBar1.Value;
+
+        }
+
+        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Normal;
+        }
+
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            saveStatetoXML(new accountdata(new headerdata(), referencepatdataList));
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
+            //config.AppSettings.Settings.Remove("myCookie");
+            //config.AppSettings.Settings.Add("myCookie", myCookie);
+            config.Save(ConfigurationSaveMode.Minimal);
+        }
+
+        private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+            contextMenu.Show(Cursor.Position);
+            }
+            if (e.Button == MouseButtons.Left)
+            {
+                if (this.WindowState == FormWindowState.Minimized)
+                {
+                    this.Show();
+                    this.WindowState = FormWindowState.Normal;
+                }
+                else
+                {
+                    this.Hide();
+                    this.WindowState = FormWindowState.Minimized;
+                }
+            }
 
         }
     }

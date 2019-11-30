@@ -44,14 +44,14 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.textBox_Alerts = new System.Windows.Forms.TextBox();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
-            this.button_DisposeAlerts = new System.Windows.Forms.Button();
-            this.checkBox_NotifyViews = new System.Windows.Forms.CheckBox();
-            this.checkBox_LogViews = new System.Windows.Forms.CheckBox();
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.abbrechenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.abbrechenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.button_DisposeAlerts = new System.Windows.Forms.Button();
+            this.checkBox_NotifyViews = new System.Windows.Forms.CheckBox();
+            this.checkBox_LogViews = new System.Windows.Forms.CheckBox();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -96,7 +96,7 @@
             this.DG1.Name = "DG1";
             this.DG1.ReadOnly = true;
             this.DG1.RowHeadersVisible = false;
-            this.DG1.Size = new System.Drawing.Size(570, 451);
+            this.DG1.Size = new System.Drawing.Size(570, 166);
             this.DG1.TabIndex = 4;
             // 
             // number
@@ -165,20 +165,59 @@
             // 
             // textBox_Alerts
             // 
-            this.textBox_Alerts.Location = new System.Drawing.Point(12, 469);
+            this.textBox_Alerts.Location = new System.Drawing.Point(12, 184);
             this.textBox_Alerts.Multiline = true;
             this.textBox_Alerts.Name = "textBox_Alerts";
-            this.textBox_Alerts.Size = new System.Drawing.Size(570, 106);
+            this.textBox_Alerts.Size = new System.Drawing.Size(570, 391);
             this.textBox_Alerts.TabIndex = 6;
             // 
             // notifyIcon1
             // 
+            this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.notifyIcon1.BalloonTipText = "asdf";
+            this.notifyIcon1.BalloonTipTitle = "asdf";
             this.notifyIcon1.ContextMenuStrip = this.contextMenu;
             this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "notifyIcon1";
             this.notifyIcon1.Visible = true;
-            this.notifyIcon1.Click += new System.EventHandler(this.notifyIcon1_Click);
-            this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+            this.notifyIcon1.BalloonTipClicked += new System.EventHandler(this.notifyIcon1_BalloonTipClicked);
+            this.notifyIcon1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
+            // 
+            // contextMenu
+            // 
+            this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showToolStripMenuItem,
+            this.closeToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.abbrechenToolStripMenuItem});
+            this.contextMenu.Name = "contextMenu";
+            this.contextMenu.Size = new System.Drawing.Size(133, 76);
+            // 
+            // showToolStripMenuItem
+            // 
+            this.showToolStripMenuItem.Name = "showToolStripMenuItem";
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.showToolStripMenuItem.Text = "Anzeigen";
+            this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
+            // 
+            // closeToolStripMenuItem
+            // 
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.closeToolStripMenuItem.Text = "Beenden";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(129, 6);
+            // 
+            // abbrechenToolStripMenuItem
+            // 
+            this.abbrechenToolStripMenuItem.Name = "abbrechenToolStripMenuItem";
+            this.abbrechenToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.abbrechenToolStripMenuItem.Text = "Abbrechen";
+            this.abbrechenToolStripMenuItem.Click += new System.EventHandler(this.abbrechenToolStripMenuItem_Click);
             // 
             // button_DisposeAlerts
             // 
@@ -215,42 +254,6 @@
             this.checkBox_LogViews.Text = "Log Views";
             this.checkBox_LogViews.UseVisualStyleBackColor = true;
             this.checkBox_LogViews.CheckedChanged += new System.EventHandler(this.checkBox_LogViews_CheckedChanged);
-            // 
-            // contextMenu
-            // 
-            this.contextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.showToolStripMenuItem,
-            this.closeToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.abbrechenToolStripMenuItem});
-            this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(133, 76);
-            // 
-            // showToolStripMenuItem
-            // 
-            this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.showToolStripMenuItem.Text = "Anzeigen";
-            this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
-            // 
-            // closeToolStripMenuItem
-            // 
-            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.closeToolStripMenuItem.Text = "Beenden";
-            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
-            // 
-            // abbrechenToolStripMenuItem
-            // 
-            this.abbrechenToolStripMenuItem.Name = "abbrechenToolStripMenuItem";
-            this.abbrechenToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.abbrechenToolStripMenuItem.Text = "Abbrechen";
-            this.abbrechenToolStripMenuItem.Click += new System.EventHandler(this.abbrechenToolStripMenuItem_Click);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(149, 6);
             // 
             // trackBar1
             // 
@@ -307,6 +310,7 @@
             this.Text = "CrazyPatterns Event-Tracker... Offline";
             this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.DG1)).EndInit();
             this.contextMenu.ResumeLayout(false);
@@ -330,7 +334,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ratings;
         private System.Windows.Forms.DataGridViewTextBoxColumn Durchschnitt;
         private System.Windows.Forms.TextBox textBox_Alerts;
-        private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.Button button_DisposeAlerts;
         private System.Windows.Forms.CheckBox checkBox_NotifyViews;
         private System.Windows.Forms.CheckBox checkBox_LogViews;
@@ -342,6 +345,7 @@
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        public System.Windows.Forms.NotifyIcon notifyIcon1;
     }
 }
 
