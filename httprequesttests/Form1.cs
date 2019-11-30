@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using HtmlAgilityPack;
 using System.Linq;
 using System.Xml.Serialization;
-
+using System.Globalization;
 
 namespace httprequesttests
 {
@@ -332,7 +332,8 @@ namespace httprequesttests
 
         public static String Timestamp()
         {
-            return DateTime.Now.ToString("yyyyMMddHHmmss");
+            return DateTime.Now.ToString("F",
+                  CultureInfo.CreateSpecificCulture("de-DE"));
         }
 
         public bool CompareLists(List<patterndata> newlist, List<patterndata> oldlist)
@@ -385,13 +386,20 @@ namespace httprequesttests
 
         private void AddAlert(string timestamp, string type ,string message)
         {
-            //MessageBox.Show(message);
-            //TODO Akustisches Signal abhängig von type des Alerts
+           
 
-            notificationQueue.Add(new notification(timestamp, type, message));
+            if (checkBox_NotifyViews.Checked || type.Equals("views") == false)
+            {
+                notificationQueue.Add(new notification(timestamp, type, message));
+                //TODO Akustisches Signal abhängig von type des Alerts
+            }
 
-            //Ausgabe in der Textbox
-            textBox_Alerts.AppendText(timestamp + ": " + message + Environment.NewLine);
+            if (checkBox_LogViews.Checked || type.Equals("views") == false)
+            {
+                //Ausgabe in der Textbox
+                textBox_Alerts.AppendText(timestamp + ": " + Environment.NewLine + message + Environment.NewLine + Environment.NewLine);
+
+            }
 
         }
 
@@ -434,12 +442,14 @@ namespace httprequesttests
         private void timer1_Tick(object sender, EventArgs e)
         {
             refresh();
+            showNotificationfromQueue();
         }
 
         private void button_DisposeAlerts_Click(object sender, EventArgs e)
         {
             textBox_Alerts.Clear();
-            notificationQueue.Add(new notification("10000", "asdf", "asdfasdf"));
+            notificationQueue.Clear();
+            //notificationQueue.Add(new notification("10000", "asdf", "asdfasdf"));
             //showNotification(new notification("10000","asdf","asdfasdf"));
             //ToastNotificationManager.CreateToastNotifier("MyApplicationId").Show(toast);
         }
@@ -450,8 +460,8 @@ namespace httprequesttests
 
             if (notificationQueue.Count > 0)
             {
-                showNotification(notificationQueue.Last());
-                notificationQueue.Remove(notificationQueue.Last());
+                showNotification(notificationQueue.First());
+                notificationQueue.Remove(notificationQueue.First());
             }
         }
 
@@ -462,7 +472,7 @@ namespace httprequesttests
 
             //notifyIcon1.ShowBalloonTip();
 
-            notifyIcon1.ShowBalloonTip(10000, "Heureka!", notification.message, ToolTipIcon.Info);
+            notifyIcon1.ShowBalloonTip(10000, "Juhuu! :D", notification.message, ToolTipIcon.Info);
 
    
 
