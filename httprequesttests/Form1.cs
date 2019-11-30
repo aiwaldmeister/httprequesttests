@@ -9,6 +9,7 @@ using HtmlAgilityPack;
 using System.Linq;
 using System.Xml.Serialization;
 
+
 namespace httprequesttests
 {
     public partial class Form1 : Form
@@ -19,22 +20,53 @@ namespace httprequesttests
         string myLoginPage = "users/login";
         string myPatmanPage = "patman";
         string myDashboardPage = "users/dashboard";
+        bool notifyViews = true;
+        bool logViews = true;
         CookieAwareWebClient client = new CookieAwareWebClient();
         List<patterndata> referencepatdataList = new List<patterndata>();
         List<patterndata> currentpatdataList = new List<patterndata>();
-        headerdata referenceaccdata;
-        headerdata newaccdata;
+        headerdata referenceheaderdata;
+        headerdata currentheaderdata;
+        List<notification> notificationQueue = new List<notification>();
 
 
-
-        [XmlRootAttribute(Namespace = "", IsNullable = false)]
-        public class accountdata
+        public class notification
         {
-            headerdata header { get; set; }
-            List<patterndata> patterns { get; set; }
+            public string timestamp { get; set; }
+            public string type { get; set; }
+            public string message { get; set; }
+
+            public notification(string timestamp,string type, string message)
+            {
+                this.timestamp = timestamp;
+                this.type = type;
+                this.message = message;
+            }
+
+            public void show()
+            {
+                
+            }
+
         }
 
-        [XmlTypeAttribute(AnonymousType = true)]
+        [XmlRootAttribute("accountdata")]
+        public class accountdata
+        {
+            public headerdata header { get; set; }
+            public List<patterndata> patterns { get; set; }
+
+            public accountdata(headerdata header, List<patterndata> patterns)
+            {
+                this.header = header;
+                this.patterns = patterns;
+            }
+            public accountdata()
+            {
+
+            }
+        }
+       
         public class headerdata
         {
             public string balance { get; set; }
@@ -53,10 +85,18 @@ namespace httprequesttests
                 this.comments = comments;
                 this.messages = messages;
             }
+            public headerdata()
+            {
+                this.balance = "";
+                this.followers = "";
+                this.sells = "";
+                this.ratings = "";
+                this.comments = "";
+                this.messages = "";
+            }
            
         }
-
-        [XmlTypeAttribute(AnonymousType = true)]
+        
         public class patterndata
         {
             public string number { get; set; }
@@ -77,44 +117,26 @@ namespace httprequesttests
                 this.ratings = ratings;
                 this.score = score;
             }
+            public patterndata()
+            {
+                this.number = "";
+                this.name = "";
+                this.views = "";
+                this.sells = "";
+                this.wishlists = "";
+                this.ratings = "";
+                this.score = "";
+            }
         }
 
-        public static accountdata Loadaccountdata(string configFile)
+        public void saveStatetoXML(accountdata acc)
         {
-            try
-            {
-                using (StreamReader reader = new StreamReader(configFile))
-                {
-                    var deserializer = new XmlSerializer(typeof(Configuration));
-                    return (Configuration)deserializer.Deserialize(reader);
-                }
-            }
-            catch (IOException)
-            {
-                // it's good to catch IOException in case the file is unavailable. 
-                // Optionally write some code to get a default or otherwise
-                // handle the exception
-                return new accountdata();
-            }
+        XmlSerializer xs = new XmlSerializer(typeof(accountdata));
+        TextWriter tw = new StreamWriter("state.xml");
+        xs.Serialize(tw, acc);
+            tw.Close();
         }
-
-
-        public static void SaveConfiguration<T>(T toSerialize, string configFile)
-        {
-            XmlSerializer xmlSerializer = new XmlSerializer(toSerialize.GetType());
-            using (TextWriter textWriter = new StreamWriter(configFile))
-            {
-                xmlSerializer.Serialize(textWriter, toSerialize);
-            }
-        }
-
-//       Player player1 = ConfigurationLoader.LoadPlayer("\\path\to\file.xml")
-//        //do something with player
-//        // and save it back
-//        ConfigurationLoader.SaveConfiguration<Player>(player1);
-
-
-
+        
         public class CookieAwareWebClient : WebClient
         {
             public CookieContainer cookie = new CookieContainer();
@@ -140,18 +162,48 @@ namespace httprequesttests
         {
             myPW = ConfigurationManager.AppSettings["myPW"];
             myUsername = ConfigurationManager.AppSettings["myUsername"];
+
+            if (ConfigurationManager.AppSettings["logViews"] =="1")
+            {
+                logViews = true;
+            }
+            else
+            {
+                logViews = false;
+            }
+
+            if (ConfigurationManager.AppSettings["notifyViews"] == "1")
+            {
+                notifyViews = true;
+            }
+            else
+            {
+                notifyViews = false;
+            }
+
+            XmlSerializer xs = new XmlSerializer(typeof(accountdata));
+            accountdata referenceaccountdata = new accountdata();
+            using (var sr = new StreamReader("state.xml"))
+            {
+                referenceaccountdata = (accountdata)xs.Deserialize(sr);
+            }
+            referencepatdataList = referenceaccountdata.patterns;
+            referenceheaderdata = referenceaccountdata.header;
+
+            showdata(referenceheaderdata,referencepatdataList);
+
         }
 
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-
+            saveStatetoXML(new accountdata(new headerdata(), referencepatdataList));
 
             Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
             //config.AppSettings.Settings.Remove("myCookie");
             //config.AppSettings.Settings.Add("myCookie", myCookie);
             config.Save(ConfigurationSaveMode.Minimal);
-
+            
         }
 
         private bool login()
@@ -191,11 +243,15 @@ namespace httprequesttests
         {
             if (client.cookie.Count == 7) //bei erfolgreichem Login sollten 7 Cookies gesetzt sein, sonst nur 0-4 -> prüfbar über die auskommentierten msg in der login methode
             {
+                this.Text = "CrazyPatterns Event-Tracker... Angemeldet als " + myUsername;
                 return true;
+
             }
             else
             {
+                this.Text = "CrazyPatterns Event-Tracker... OFfline";
                 return false;
+                
             }
                         
         }
@@ -245,12 +301,15 @@ namespace httprequesttests
                 
             }
 
-            shownewdata();
+            
 
             //TODO
             //Compare newList to refList
-
-            CompareLists(currentpatdataList, referencepatdataList);
+            bool changes = CompareLists(currentpatdataList, referencepatdataList);
+            if (changes)
+            {
+                showdata(currentheaderdata,currentpatdataList);
+            }
 
 
             //neue Liste ist fürs nächte mal die referenz
@@ -263,14 +322,15 @@ namespace httprequesttests
             
         }
 
-
         public static String Timestamp()
         {
             return DateTime.Now.ToString("yyyyMMddHHmmss");
         }
 
-        private void CompareLists(List<patterndata> newlist, List<patterndata> oldlist)
+        public bool CompareLists(List<patterndata> newlist, List<patterndata> oldlist)
         {
+            bool changeshappened = false;
+            
             foreach (patterndata n in newlist)
             {
                 foreach (patterndata o in oldlist)
@@ -281,32 +341,38 @@ namespace httprequesttests
                         if (n.name.CompareTo(o.name)!=0)
                         {
                             AddAlert(Timestamp(), "name", "Der name von Pattern '" + o.name + "' wurde zu '" + n.name + "' geändert.");
+                            changeshappened = true;
                         }
 
                         if (n.views.CompareTo(o.views)!=0)
                         {
                             AddAlert(Timestamp(), "views", "Die Anzahl der Views auf " + n.name + " ist von " + o.views + " auf " + n.views + " gestiegen.");
+                            changeshappened = true;
                         }
 
                         if (n.views.CompareTo(o.views) != 0)
                         {
                             AddAlert(Timestamp(), "sells", "Die Anzahl der Verkäufe auf " + n.name + " ist von " + o.sells + " auf " + n.sells + " gestiegen.");
+                            changeshappened = true;
                         }
 
                         if (n.views.CompareTo(o.views) != 0)
                         {
                             AddAlert(Timestamp(), "wishlists", "Die Anzahl der Wunschlisten auf " + n.name + " hat sich von " + o.wishlists + " auf " + n.wishlists + " geändert.");
+                            changeshappened = true;
                         }
 
                         if (n.views.CompareTo(o.views) != 0)
                         {
                             AddAlert(Timestamp(), "score", "Die Anzahl der Bewertungen auf " + n.name + " ist von " + o.ratings + " auf " + n.ratings + " gestiegen. (Neuer Schnitt ist "  + n.score + ")");
+                            changeshappened = true;
                         }
 
                         break;
                     }
                 }
             }
+            return changeshappened;
         }
 
         private void AddAlert(string timestamp, string type ,string message)
@@ -316,13 +382,14 @@ namespace httprequesttests
 
             //Ausgabe in der Textbox
             textBox_Alerts.AppendText(timestamp + ": " + message + Environment.NewLine);
+
         }
 
-        private void shownewdata()
+        private void showdata(headerdata head, List<patterndata> patterns)
         {
             //populate DataGridView...
             DG1.Rows.Clear();
-            foreach (patterndata pat in currentpatdataList)
+            foreach (patterndata pat in patterns)
             {
                 DG1.Rows.Add(
                     pat.number,
@@ -359,5 +426,68 @@ namespace httprequesttests
             refresh();
         }
 
+        private void button_DisposeAlerts_Click(object sender, EventArgs e)
+        {
+            
+            showNotification(new notification("123456","asdf","asdfasdf"));
+            //ToastNotificationManager.CreateToastNotifier("MyApplicationId").Show(toast);
+        }
+
+        private void showNotificationfromQueue()
+        {
+            if (notificationQueue.Count > 0)
+            {
+                showNotification(notificationQueue.Last());
+                notificationQueue.Remove(notificationQueue.Last());
+            }
+        }
+
+        private void showNotification(notification notification)
+        {
+            notifyIcon1.ShowBalloonTip(3000, "Heureka!", notification.message, ToolTipIcon.Info);
+
+        }
+
+        private void checkBox_LogViews_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_LogViews.Checked)
+            {
+                logViews = true;
+
+                setConfigValue("logViews", "1");
+            }
+            else
+            {
+                logViews = false;
+                setConfigValue("logViews", "0");
+            }
+
+            
+        }
+
+        private void checkBox_NotifyViews_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_NotifyViews.Checked)
+            {
+                notifyViews = true;
+                setConfigValue("notifyViews", "1");
+            }
+            else
+            {
+                notifyViews = false;
+                setConfigValue("notifyViews", "0");
+            }
+
+            
+        }
+
+        private void setConfigValue(string key, string value)
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
+
+            config.AppSettings.Settings.Remove(key);
+            config.AppSettings.Settings.Add(key, value);
+            config.Save(ConfigurationSaveMode.Modified);
+        }
     }
 }           
