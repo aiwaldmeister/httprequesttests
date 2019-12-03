@@ -16,10 +16,10 @@ namespace httprequesttests
     {
         string myUsername;
         string myPW;
-        string myBaseURL = "https://www.crazypatterns.net/de/";
-        string myLoginPage = "users/login";
-        string myPatmanPage = "patman";
-        string myDashboardPage = "users/dashboard";
+        string baseURL = "https://www.crazypatterns.net/de/";
+        string loginURL = "users/login";
+        string patmanURL = "patman";
+        string dashboardURL = "users/dashboard";
         bool notifyViews = true;
         bool logViews = true;
         bool preventFormClosing = true;
@@ -30,6 +30,10 @@ namespace httprequesttests
         headerdata currentheaderdata;
         List<notification> notificationQueue = new List<notification>();
 
+        public Form1()
+        {
+            InitializeComponent();
+        }
 
         public class notification
         {
@@ -130,14 +134,6 @@ namespace httprequesttests
             }
         }
 
-        public void saveStatetoXML(accountdata acc)
-        {
-        XmlSerializer xs = new XmlSerializer(typeof(accountdata));
-        TextWriter tw = new StreamWriter("state.xml");
-        xs.Serialize(tw, acc);
-            tw.Close();
-        }
-        
         public class CookieAwareWebClient : WebClient
         {
             public CookieContainer cookie = new CookieContainer();
@@ -153,10 +149,14 @@ namespace httprequesttests
             }
 
         }
-
-        public Form1()
+        
+        private void setConfigValue(string key, string value)
         {
-            InitializeComponent();
+            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
+
+            config.AppSettings.Settings.Remove(key);
+            config.AppSettings.Settings.Add(key, value);
+            config.Save(ConfigurationSaveMode.Modified);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -166,7 +166,7 @@ namespace httprequesttests
             int intervall = 10000;
             Int32.TryParse(ConfigurationManager.AppSettings["intervall"], out intervall);
             trackBar1.Value = intervall;
-            timer1.Interval = intervall;
+            timer_autorefresh.Interval = intervall;
 
             if (ConfigurationManager.AppSettings["logViews"] =="1")
             {
@@ -185,6 +185,10 @@ namespace httprequesttests
             {
                 notifyViews = false;
             }
+            checkBox_LogViews.Checked = logViews;
+            checkBox_NotifyViews.Checked = notifyViews;
+
+            if (System.IO.File.Exists("state.xml")){
 
             XmlSerializer xs = new XmlSerializer(typeof(accountdata));
             accountdata referenceaccountdata = new accountdata();
@@ -196,13 +200,13 @@ namespace httprequesttests
             referenceheaderdata = referenceaccountdata.header;
 
             showdata(referenceheaderdata,referencepatdataList);
+            }
 
-            timer1.Enabled = true;
+            timer_autorefresh.Enabled = true;
             button_Timer_Toggle.Text = "Stop Tracking";
             refresh();
 
         }
-
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -212,37 +216,22 @@ namespace httprequesttests
 
         }
 
-        private bool login()
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            saveStatetoXML(new accountdata(new headerdata(), referencepatdataList));
 
+            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
+            //config.AppSettings.Settings.Remove("myCookie");
+            //config.AppSettings.Settings.Add("myCookie", myCookie);
+            config.Save(ConfigurationSaveMode.Minimal);
+        }
 
-            //MessageBox.Show(client.cookie.Count.ToString());
-
-            client = new CookieAwareWebClient();
-            client.Encoding = Encoding.UTF8;
-            client.BaseAddress = myBaseURL;
-            var loginData = new System.Collections.Specialized.NameValueCollection();
-            loginData.Add("username", myUsername);
-            loginData.Add("password", myPW);
-            loginData.Add("permalogin", "1");
-
-            //MessageBox.Show(client.cookie.Count.ToString());
-
-            try
-            {
-                client.UploadValues(myLoginPage, "POST", loginData);
-
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-            //MessageBox.Show(client.cookie.Count.ToString());
-
-            return getClientLoggedin();
-
+        public void saveStatetoXML(accountdata acc)
+        {
+        XmlSerializer xs = new XmlSerializer(typeof(accountdata));
+        TextWriter tw = new StreamWriter("state.xml");
+        xs.Serialize(tw, acc);
+            tw.Close();
         }
 
         private bool getClientLoggedin()
@@ -264,9 +253,73 @@ namespace httprequesttests
                         
         }
 
-        private void button_Webclient_Request_Click(object sender, EventArgs e)
+        private bool login()
         {
-            refresh();
+
+
+            //MessageBox.Show(client.cookie.Count.ToString());
+
+            client = new CookieAwareWebClient();
+            client.Encoding = Encoding.UTF8;
+            client.BaseAddress = baseURL;
+            var loginData = new System.Collections.Specialized.NameValueCollection();
+            loginData.Add("username", myUsername);
+            loginData.Add("password", myPW);
+            loginData.Add("permalogin", "1");
+
+            //MessageBox.Show(client.cookie.Count.ToString());
+
+            try
+            {
+                client.UploadValues(loginURL, "POST", loginData);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+            //MessageBox.Show(client.cookie.Count.ToString());
+
+            return getClientLoggedin();
+
+        }
+
+        private void fillcurrentpatdata()
+        {
+            string patmanpage = client.DownloadString(patmanURL);
+            textBox_response.Text = patmanpage;
+
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(patmanpage);
+
+            var TDs = doc.DocumentNode.SelectSingleNode("//tbody").Descendants("tr")
+            .Where(tr => tr.Elements("td").Count() > 1)
+            .Select(tr => tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
+            .ToList();
+
+            
+            currentpatdataList.Clear();
+            foreach (List<string> Rows in TDs)
+            {
+                patterndata pat = new patterndata();
+                pat.number = Rows[3];
+                pat.name = Rows[2].Substring(0, Rows[2].IndexOf("\r\n"));  //name
+                pat.views = Rows[8];
+                pat.sells = Rows[9];
+                pat.wishlists = Rows[14];
+                pat.ratings = Rows[16];
+                pat.score = Rows[15];
+
+                currentpatdataList.Add(pat);                
+            }
+
+        }
+
+        private void fillcurrentheaderdata()
+        {
+            //TODO:
         }
 
         private void refresh()
@@ -276,44 +329,11 @@ namespace httprequesttests
                 login();
             }
 
+            fillcurrentpatdata();
+            fillcurrentheaderdata();
 
-            string page = client.DownloadString(myPatmanPage);
-            textBox_response.Text = page;
-
-            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(page);
-
-            var TDs = doc.DocumentNode.SelectSingleNode("//tbody").Descendants("tr")
-            .Where(tr => tr.Elements("td").Count() > 1)
-            .Select(tr => tr.Elements("td").Select(td => td.InnerText.Trim()).ToList())
-            .ToList();
-
-
-
-            //fill newList
-
-            currentpatdataList.Clear();
-            foreach (List<string> Rows in TDs)
-            {
-                patterndata pat = new patterndata(
-                    Rows[3],  //number
-                    Rows[2].Substring(0, Rows[2].IndexOf("\r\n")),  //name
-                    Rows[8],  //views
-                    Rows[9],  //sells
-                    Rows[13], //wishlists
-                    Rows[15], //ratings
-                    Rows[14]  //score
-                    );
-
-                currentpatdataList.Add(pat);
-                
-            }
-
-            
-
-            //TODO
-            //Compare newList to refList
-            bool changes = CompareLists(currentpatdataList, referencepatdataList);
+            //Compare new header and patterndata to references
+            bool changes = ComparepatdataLists(currentpatdataList, referencepatdataList) || Compareheaders(currentheaderdata,referenceheaderdata);
             if (changes)
             {
                 showdata(currentheaderdata,currentpatdataList);
@@ -330,13 +350,52 @@ namespace httprequesttests
             
         }
 
-        public static String Timestamp()
+        public bool Compareheaders(headerdata newheader, headerdata oldheader)
         {
-            return DateTime.Now.ToString("F",
-                  CultureInfo.CreateSpecificCulture("de-DE"));
+            bool changeshappened = false;
+
+            // Änderungen prüfen und ggf. flag setzen
+            if (newheader.sells.Equals(oldheader.sells))
+            {
+                addNotificationToQueue(Timestamp(), "totalsells", "Die Anzahl der Verkäufe (Accountweit) ist von " + oldheader.sells + "' auf '" + newheader.sells + "' gestiegen.");
+                changeshappened = true;
+            }
+            if (newheader.balance.Equals(oldheader.balance))
+
+            {
+                addNotificationToQueue(Timestamp(), "balance", "Der Kontostand hat sich von " + oldheader.balance + "' auf '" + newheader.balance + "' geändert.");
+                changeshappened = true;
+            }
+
+            if (newheader.comments.Equals(oldheader.comments))
+            {
+                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Kommentare hat sich von " + oldheader.comments + "' auf '" + newheader.comments + "' geändert.");
+                changeshappened = true;
+            }
+
+            if (newheader.followers.Equals(oldheader.followers))
+            {
+                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Follower hat sich von " + oldheader.followers + "' auf '" + newheader.followers + "' geändert.");
+                changeshappened = true;
+            }
+
+            if (newheader.ratings.Equals(oldheader.ratings))
+            {
+                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Bewertungen (Accountweit) hat sich von " + oldheader.ratings + "' auf '" + newheader.ratings + "' geändert.");
+                changeshappened = true;
+            }
+
+            if (newheader.messages.Equals(oldheader.messages))
+            {
+                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Messages hat sich von " + oldheader.messages + "' auf '" + newheader.messages + "' geändert.");
+                changeshappened = true;
+            }
+
+
+            return changeshappened;
         }
 
-        public bool CompareLists(List<patterndata> newlist, List<patterndata> oldlist)
+        public bool ComparepatdataLists(List<patterndata> newlist, List<patterndata> oldlist)
         {
             bool changeshappened = false;
             
@@ -347,33 +406,33 @@ namespace httprequesttests
                     if (n.number.CompareTo(o.number)==0)
                     {//found the matching pattern in the List, now we can copare values
 
-                        if (n.name.Equals(o.name)!=true)
+                        if (!n.name.Equals(o.name))
                         {
-                            AddAlert(Timestamp(), "name", "Der name von Pattern '" + o.name + "' wurde zu '" + n.name + "' geändert.");
+                            addNotificationToQueue(Timestamp(), "name", "Der name von Pattern '" + o.name + "' wurde zu '" + n.name + "' geändert.");
                             changeshappened = true;
                         }
 
-                        if (n.views.Equals(o.views)!= true)
+                        if (!n.views.Equals(o.views))
                         {
-                            AddAlert(Timestamp(), "views", "Die Anzahl der Views auf " + n.name + " ist von " + o.views + " auf " + n.views + " gestiegen.");
+                            addNotificationToQueue(Timestamp(), "views", "Die Anzahl der Views auf " + n.name + " ist von " + o.views + " auf " + n.views + " gestiegen.");
                             changeshappened = true;
                         }
 
-                        if (n.sells.Equals(o.sells) != true)
+                        if (!n.sells.Equals(o.sells))
                         {
-                            AddAlert(Timestamp(), "sells", "Die Anzahl der Verkäufe auf " + n.name + " ist von " + o.sells + " auf " + n.sells + " gestiegen.");
+                            addNotificationToQueue(Timestamp(), "sells", "Die Anzahl der Verkäufe auf " + n.name + " ist von " + o.sells + " auf " + n.sells + " gestiegen.");
                             changeshappened = true;
                         }
 
-                        if (n.wishlists.Equals(o.wishlists) != true)
+                        if (!n.wishlists.Equals(o.wishlists))
                         {
-                            AddAlert(Timestamp(), "wishlists", "Die Anzahl der Wunschlisten auf " + n.name + " hat sich von " + o.wishlists + " auf " + n.wishlists + " geändert.");
+                            addNotificationToQueue(Timestamp(), "wishlists", "Die Anzahl der Wunschlisten auf " + n.name + " hat sich von " + o.wishlists + " auf " + n.wishlists + " geändert.");
                             changeshappened = true;
                         }
 
-                        if (n.ratings.Equals(o.ratings) != true)
+                        if (!n.ratings.Equals(o.ratings))
                         {
-                            AddAlert(Timestamp(), "score", "Die Anzahl der Bewertungen auf " + n.name + " ist von " + o.ratings + " auf " + n.ratings + " gestiegen. (Neuer Schnitt ist "  + n.score + ")");
+                            addNotificationToQueue(Timestamp(), "score", "Die Anzahl der Bewertungen auf " + n.name + " ist von " + o.ratings + " auf " + n.ratings + " gestiegen. (Neuer Schnitt ist "  + n.score + ")");
                             changeshappened = true;
                         }
 
@@ -383,26 +442,7 @@ namespace httprequesttests
             }
             return changeshappened;
         }
-
-        private void AddAlert(string timestamp, string type ,string message)
-        {
-           
-
-            if (checkBox_NotifyViews.Checked || type.Equals("views") == false)
-            {
-                notificationQueue.Add(new notification(timestamp, type, message));
-                //TODO Akustisches Signal abhängig von type des Alerts
-            }
-
-            if (checkBox_LogViews.Checked || type.Equals("views") == false)
-            {
-                //Ausgabe in der Textbox
-                textBox_Alerts.AppendText(timestamp + ": " + Environment.NewLine + message + Environment.NewLine + Environment.NewLine);
-
-            }
-
-        }
-
+        
         private void showdata(headerdata head, List<patterndata> patterns)
         {
             //populate DataGridView...
@@ -421,47 +461,34 @@ namespace httprequesttests
 
             //TODO
             //Display Accountwide data
-            
 
         }
 
-        private void button_Timer_Toggle_Click(object sender, EventArgs e)
+        public static String Timestamp()
         {
-            if (!timer1.Enabled)
+            return DateTime.Now.ToString("F",
+                  CultureInfo.CreateSpecificCulture("de-DE"));
+        }
+
+        private void addNotificationToQueue(string timestamp, string type ,string message)
+        {
+           
+
+            if (notifyViews || !type.Equals("views"))
             {
-                timer1.Enabled = true;
-                button_Timer_Toggle.Text = "Stop Tracking";
+                notificationQueue.Add(new notification(timestamp, type, message));
+                //TODO Akustisches Signal abhängig von type des Alerts
             }
-            else
+
+            if (logViews || !type.Equals("views"))
             {
-                timer1.Enabled = false;
-                button_Timer_Toggle.Text = "Start Tracking";
+                //Ausgabe in der Textbox
+                textBox_Alerts.AppendText(timestamp + ": " + Environment.NewLine + message + Environment.NewLine + Environment.NewLine);
             }
-        }
 
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            refresh();
-            showNotificationfromQueue();
-        }
-
-        private void button_DisposeAlerts_Click(object sender, EventArgs e)
-        {
-            textBox_Alerts.Clear();
-            notificationQueue.Clear();
-            //notificationQueue.Add(new notification("10000", "asdf", "asdfasdf"));
-            //showNotification(new notification("10000","asdf","asdfasdf"));
-            //ToastNotificationManager.CreateToastNotifier("MyApplicationId").Show(toast);
-        }
-
-        private void showNotificationfromQueue()
-        {
-            
-
-            if (notificationQueue.Count > 0)
+            if (!timer_notifications.Enabled)
             {
-                showNotification(notificationQueue.First());
-                notificationQueue.Remove(notificationQueue.First());
+                timer_notifications.Enabled = true;
             }
         }
 
@@ -476,6 +503,52 @@ namespace httprequesttests
 
    
 
+        }
+
+        private void showNotificationfromQueue()
+        {
+            if (notificationQueue.Count > 0)
+            {
+                showNotification(notificationQueue.First());
+                notificationQueue.Remove(notificationQueue.First());
+            }
+            else
+            {
+                timer_notifications.Enabled = false;
+            }
+        }
+
+        private void timer_autorefresh_Tick(object sender, EventArgs e)
+        {
+            refresh();
+        }
+
+        private void button_refresh_Click(object sender, EventArgs e)
+        {
+            refresh();
+        }
+
+        private void button_Timer_Toggle_Click(object sender, EventArgs e)
+        {
+            if (!timer_autorefresh.Enabled)
+            {
+                timer_autorefresh.Enabled = true;
+                button_Timer_Toggle.Text = "Stop Tracking";
+            }
+            else
+            {
+                timer_autorefresh.Enabled = false;
+                button_Timer_Toggle.Text = "Start Tracking";
+            }
+        }
+
+        private void button_Clear_Messages_Click(object sender, EventArgs e)
+        {
+            textBox_Alerts.Clear();
+            notificationQueue.Clear();
+            //notificationQueue.Add(new notification("10000", "asdf", "asdfasdf"));
+            //showNotification(new notification("10000","asdf","asdfasdf"));
+            //ToastNotificationManager.CreateToastNotifier("MyApplicationId").Show(toast);
         }
 
         private void checkBox_LogViews_CheckedChanged(object sender, EventArgs e)
@@ -511,17 +584,6 @@ namespace httprequesttests
             
         }
 
-        private void setConfigValue(string key, string value)
-        {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
-
-            config.AppSettings.Settings.Remove(key);
-            config.AppSettings.Settings.Add(key, value);
-            config.Save(ConfigurationSaveMode.Modified);
-        }
-
-
-
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //this.Visible = true;
@@ -533,7 +595,6 @@ namespace httprequesttests
             preventFormClosing = false;
             this.Close();
         }
-
 
         private void abbrechenToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -547,23 +608,14 @@ namespace httprequesttests
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
             setConfigValue("intervall", trackBar1.Value.ToString());
-            timer1.Interval = trackBar1.Value;
+            timer_autorefresh.Interval = trackBar1.Value;
 
         }
 
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
         {
             this.WindowState = FormWindowState.Normal;
-        }
-
-        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            saveStatetoXML(new accountdata(new headerdata(), referencepatdataList));
-
-            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
-            //config.AppSettings.Settings.Remove("myCookie");
-            //config.AppSettings.Settings.Add("myCookie", myCookie);
-            config.Save(ConfigurationSaveMode.Minimal);
+            this.Show();
         }
 
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
@@ -577,15 +629,20 @@ namespace httprequesttests
                 if (this.WindowState == FormWindowState.Minimized)
                 {
                     this.Show();
-                    this.WindowState = FormWindowState.Normal;
+                    //this.WindowState = FormWindowState.Normal;
                 }
                 else
                 {
                     this.Hide();
-                    this.WindowState = FormWindowState.Minimized;
+                    //this.WindowState = FormWindowState.Minimized;
                 }
             }
 
+        }
+
+        private void timer_notifications_Tick(object sender, EventArgs e)
+        {
+            showNotificationfromQueue();
         }
     }
 }           

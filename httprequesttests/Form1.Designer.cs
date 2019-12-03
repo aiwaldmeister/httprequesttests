@@ -41,7 +41,7 @@
             this.ratings = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Durchschnitt = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.button_Timer_Toggle = new System.Windows.Forms.Button();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.timer_autorefresh = new System.Windows.Forms.Timer(this.components);
             this.textBox_Alerts = new System.Windows.Forms.TextBox();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -49,12 +49,13 @@
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.abbrechenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.button_DisposeAlerts = new System.Windows.Forms.Button();
+            this.button_ClearMessages = new System.Windows.Forms.Button();
             this.checkBox_NotifyViews = new System.Windows.Forms.CheckBox();
             this.checkBox_LogViews = new System.Windows.Forms.CheckBox();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
+            this.timer_notifications = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.DG1)).BeginInit();
             this.contextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -77,7 +78,7 @@
             this.button_Webclient_Request.TabIndex = 3;
             this.button_Webclient_Request.Text = "Refresh Manually";
             this.button_Webclient_Request.UseVisualStyleBackColor = true;
-            this.button_Webclient_Request.Click += new System.EventHandler(this.button_Webclient_Request_Click);
+            this.button_Webclient_Request.Click += new System.EventHandler(this.button_refresh_Click);
             // 
             // DG1
             // 
@@ -158,10 +159,10 @@
             this.button_Timer_Toggle.UseVisualStyleBackColor = true;
             this.button_Timer_Toggle.Click += new System.EventHandler(this.button_Timer_Toggle_Click);
             // 
-            // timer1
+            // timer_autorefresh
             // 
-            this.timer1.Interval = 10000;
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timer_autorefresh.Interval = 10000;
+            this.timer_autorefresh.Tick += new System.EventHandler(this.timer_autorefresh_Tick);
             // 
             // textBox_Alerts
             // 
@@ -219,15 +220,15 @@
             this.abbrechenToolStripMenuItem.Text = "Abbrechen";
             this.abbrechenToolStripMenuItem.Click += new System.EventHandler(this.abbrechenToolStripMenuItem_Click);
             // 
-            // button_DisposeAlerts
+            // button_ClearMessages
             // 
-            this.button_DisposeAlerts.Location = new System.Drawing.Point(13, 582);
-            this.button_DisposeAlerts.Name = "button_DisposeAlerts";
-            this.button_DisposeAlerts.Size = new System.Drawing.Size(176, 23);
-            this.button_DisposeAlerts.TabIndex = 7;
-            this.button_DisposeAlerts.Text = "Meldungen leeren";
-            this.button_DisposeAlerts.UseVisualStyleBackColor = true;
-            this.button_DisposeAlerts.Click += new System.EventHandler(this.button_DisposeAlerts_Click);
+            this.button_ClearMessages.Location = new System.Drawing.Point(13, 582);
+            this.button_ClearMessages.Name = "button_ClearMessages";
+            this.button_ClearMessages.Size = new System.Drawing.Size(176, 23);
+            this.button_ClearMessages.TabIndex = 7;
+            this.button_ClearMessages.Text = "Meldungen leeren";
+            this.button_ClearMessages.UseVisualStyleBackColor = true;
+            this.button_ClearMessages.Click += new System.EventHandler(this.button_Clear_Messages_Click);
             // 
             // checkBox_NotifyViews
             // 
@@ -286,6 +287,11 @@
             this.label3.TabIndex = 11;
             this.label3.Text = "30 Min";
             // 
+            // timer_notifications
+            // 
+            this.timer_notifications.Interval = 10000;
+            this.timer_notifications.Tick += new System.EventHandler(this.timer_notifications_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -296,7 +302,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.checkBox_LogViews);
             this.Controls.Add(this.checkBox_NotifyViews);
-            this.Controls.Add(this.button_DisposeAlerts);
+            this.Controls.Add(this.button_ClearMessages);
             this.Controls.Add(this.textBox_Alerts);
             this.Controls.Add(this.button_Timer_Toggle);
             this.Controls.Add(this.DG1);
@@ -325,7 +331,7 @@
         private System.Windows.Forms.Button button_Webclient_Request;
         private System.Windows.Forms.DataGridView DG1;
         private System.Windows.Forms.Button button_Timer_Toggle;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timer_autorefresh;
         private System.Windows.Forms.DataGridViewTextBoxColumn number;
         private System.Windows.Forms.DataGridViewTextBoxColumn name;
         private System.Windows.Forms.DataGridViewTextBoxColumn views;
@@ -334,7 +340,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ratings;
         private System.Windows.Forms.DataGridViewTextBoxColumn Durchschnitt;
         private System.Windows.Forms.TextBox textBox_Alerts;
-        private System.Windows.Forms.Button button_DisposeAlerts;
+        private System.Windows.Forms.Button button_ClearMessages;
         private System.Windows.Forms.CheckBox checkBox_NotifyViews;
         private System.Windows.Forms.CheckBox checkBox_LogViews;
         private System.Windows.Forms.ContextMenuStrip contextMenu;
@@ -346,6 +352,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         public System.Windows.Forms.NotifyIcon notifyIcon1;
+        private System.Windows.Forms.Timer timer_notifications;
     }
 }
 
