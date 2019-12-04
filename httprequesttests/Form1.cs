@@ -26,8 +26,8 @@ namespace httprequesttests
         CookieAwareWebClient client = new CookieAwareWebClient();
         List<patterndata> referencepatdataList = new List<patterndata>();
         List<patterndata> currentpatdataList = new List<patterndata>();
-        headerdata referenceheaderdata;
-        headerdata currentheaderdata;
+        headerdata referenceheaderdata = new headerdata();
+        headerdata currentheaderdata = new headerdata();
         List<notification> notificationQueue = new List<notification>();
 
         public Form1()
@@ -99,7 +99,16 @@ namespace httprequesttests
                 this.comments = "";
                 this.messages = "";
             }
-           
+
+            internal void clear()
+            {
+                this.balance = "";
+                this.followers = "";
+                this.sells = "";
+                this.ratings = "";
+                this.comments = "";
+                this.messages = "";
+            }
         }
         
         public class patterndata
@@ -325,10 +334,11 @@ namespace httprequesttests
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
             doc.LoadHtml(headerpage);
 
-            var values = doc.DocumentNode.SelectSingleNode("div[@class='col - xs - 12 col - sm - 12 col - md - 12 col - lg - 12 dashboard']")
-                .InnerText.ToList();
-            
-            currentheaderdata.cle
+            var values = doc.DocumentNode.SelectSingleNode("//div[@class='col-xs-12 col-sm-12 col-md-12 col-lg-12 dashboard']")
+                .Descendants("div").Where(div => div.Descendants("div").Count()<1).Select(div => div.InnerText.Trim()).ToList();
+                
+
+            currentheaderdata.clear();
 
         }
 
