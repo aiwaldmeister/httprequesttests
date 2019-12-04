@@ -320,6 +320,16 @@ namespace httprequesttests
         private void fillcurrentheaderdata()
         {
             //TODO:
+            string headerpage = client.DownloadString(dashboardURL);
+
+            HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(headerpage);
+
+            var values = doc.DocumentNode.SelectSingleNode("div[@class='col - xs - 12 col - sm - 12 col - md - 12 col - lg - 12 dashboard']")
+                .InnerText.ToList();
+            
+            currentheaderdata.cle
+
         }
 
         private void refresh()
