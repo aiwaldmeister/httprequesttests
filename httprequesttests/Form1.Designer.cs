@@ -63,20 +63,18 @@
             // 
             // textBox_response
             // 
-            this.textBox_response.Location = new System.Drawing.Point(799, 44);
-            this.textBox_response.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBox_response.Location = new System.Drawing.Point(1166, 12);
             this.textBox_response.Multiline = true;
             this.textBox_response.Name = "textBox_response";
             this.textBox_response.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox_response.Size = new System.Drawing.Size(619, 779);
+            this.textBox_response.Size = new System.Drawing.Size(465, 634);
             this.textBox_response.TabIndex = 1;
             // 
             // button_Webclient_Request
             // 
-            this.button_Webclient_Request.Location = new System.Drawing.Point(337, 716);
-            this.button_Webclient_Request.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_Webclient_Request.Location = new System.Drawing.Point(253, 582);
             this.button_Webclient_Request.Name = "button_Webclient_Request";
-            this.button_Webclient_Request.Size = new System.Drawing.Size(85, 28);
+            this.button_Webclient_Request.Size = new System.Drawing.Size(64, 23);
             this.button_Webclient_Request.TabIndex = 3;
             this.button_Webclient_Request.Text = "Refresh Manually";
             this.button_Webclient_Request.UseVisualStyleBackColor = true;
@@ -95,12 +93,11 @@
             this.wishlists,
             this.ratings,
             this.Durchschnitt});
-            this.DG1.Location = new System.Drawing.Point(16, 15);
-            this.DG1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.DG1.Location = new System.Drawing.Point(590, 12);
             this.DG1.Name = "DG1";
             this.DG1.ReadOnly = true;
             this.DG1.RowHeadersVisible = false;
-            this.DG1.Size = new System.Drawing.Size(760, 204);
+            this.DG1.Size = new System.Drawing.Size(570, 634);
             this.DG1.TabIndex = 4;
             // 
             // number
@@ -154,10 +151,9 @@
             // 
             // button_Timer_Toggle
             // 
-            this.button_Timer_Toggle.Location = new System.Drawing.Point(520, 715);
-            this.button_Timer_Toggle.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_Timer_Toggle.Location = new System.Drawing.Point(390, 581);
             this.button_Timer_Toggle.Name = "button_Timer_Toggle";
-            this.button_Timer_Toggle.Size = new System.Drawing.Size(256, 28);
+            this.button_Timer_Toggle.Size = new System.Drawing.Size(192, 23);
             this.button_Timer_Toggle.TabIndex = 5;
             this.button_Timer_Toggle.Text = "Activate Tracking";
             this.button_Timer_Toggle.UseVisualStyleBackColor = true;
@@ -170,11 +166,11 @@
             // 
             // textBox_Alerts
             // 
-            this.textBox_Alerts.Location = new System.Drawing.Point(16, 226);
-            this.textBox_Alerts.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.textBox_Alerts.Location = new System.Drawing.Point(12, 12);
             this.textBox_Alerts.Multiline = true;
             this.textBox_Alerts.Name = "textBox_Alerts";
-            this.textBox_Alerts.Size = new System.Drawing.Size(759, 480);
+            this.textBox_Alerts.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox_Alerts.Size = new System.Drawing.Size(570, 563);
             this.textBox_Alerts.TabIndex = 6;
             // 
             // notifyIcon1
@@ -198,40 +194,39 @@
             this.toolStripSeparator1,
             this.abbrechenToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
-            this.contextMenu.Size = new System.Drawing.Size(151, 82);
+            this.contextMenu.Size = new System.Drawing.Size(133, 76);
             // 
             // showToolStripMenuItem
             // 
             this.showToolStripMenuItem.Name = "showToolStripMenuItem";
-            this.showToolStripMenuItem.Size = new System.Drawing.Size(150, 24);
+            this.showToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.showToolStripMenuItem.Text = "Anzeigen";
             this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
             // 
             // closeToolStripMenuItem
             // 
             this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-            this.closeToolStripMenuItem.Size = new System.Drawing.Size(150, 24);
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.closeToolStripMenuItem.Text = "Beenden";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(147, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(129, 6);
             // 
             // abbrechenToolStripMenuItem
             // 
             this.abbrechenToolStripMenuItem.Name = "abbrechenToolStripMenuItem";
-            this.abbrechenToolStripMenuItem.Size = new System.Drawing.Size(150, 24);
+            this.abbrechenToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.abbrechenToolStripMenuItem.Text = "Abbrechen";
             this.abbrechenToolStripMenuItem.Click += new System.EventHandler(this.abbrechenToolStripMenuItem_Click);
             // 
             // button_ClearMessages
             // 
-            this.button_ClearMessages.Location = new System.Drawing.Point(17, 716);
-            this.button_ClearMessages.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button_ClearMessages.Location = new System.Drawing.Point(13, 582);
             this.button_ClearMessages.Name = "button_ClearMessages";
-            this.button_ClearMessages.Size = new System.Drawing.Size(235, 28);
+            this.button_ClearMessages.Size = new System.Drawing.Size(176, 23);
             this.button_ClearMessages.TabIndex = 7;
             this.button_ClearMessages.Text = "Meldungen leeren";
             this.button_ClearMessages.UseVisualStyleBackColor = true;
@@ -242,10 +237,9 @@
             this.checkBox_NotifyViews.AutoSize = true;
             this.checkBox_NotifyViews.Checked = true;
             this.checkBox_NotifyViews.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_NotifyViews.Location = new System.Drawing.Point(140, 752);
-            this.checkBox_NotifyViews.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBox_NotifyViews.Location = new System.Drawing.Point(105, 611);
             this.checkBox_NotifyViews.Name = "checkBox_NotifyViews";
-            this.checkBox_NotifyViews.Size = new System.Drawing.Size(106, 21);
+            this.checkBox_NotifyViews.Size = new System.Drawing.Size(84, 17);
             this.checkBox_NotifyViews.TabIndex = 8;
             this.checkBox_NotifyViews.Text = "Notify Views";
             this.checkBox_NotifyViews.UseVisualStyleBackColor = true;
@@ -256,10 +250,9 @@
             this.checkBox_LogViews.AutoSize = true;
             this.checkBox_LogViews.Checked = true;
             this.checkBox_LogViews.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_LogViews.Location = new System.Drawing.Point(17, 752);
-            this.checkBox_LogViews.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.checkBox_LogViews.Location = new System.Drawing.Point(13, 611);
             this.checkBox_LogViews.Name = "checkBox_LogViews";
-            this.checkBox_LogViews.Size = new System.Drawing.Size(94, 21);
+            this.checkBox_LogViews.Size = new System.Drawing.Size(75, 17);
             this.checkBox_LogViews.TabIndex = 9;
             this.checkBox_LogViews.Text = "Log Views";
             this.checkBox_LogViews.UseVisualStyleBackColor = true;
@@ -267,12 +260,11 @@
             // 
             // trackBar1
             // 
-            this.trackBar1.Location = new System.Drawing.Point(568, 751);
-            this.trackBar1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.trackBar1.Location = new System.Drawing.Point(426, 610);
             this.trackBar1.Maximum = 180000;
             this.trackBar1.Minimum = 10000;
             this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(161, 56);
+            this.trackBar1.Size = new System.Drawing.Size(121, 45);
             this.trackBar1.TabIndex = 12;
             this.trackBar1.TickFrequency = 10000;
             this.trackBar1.Value = 10000;
@@ -282,20 +274,18 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(516, 753);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(387, 612);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(52, 17);
+            this.label2.Size = new System.Drawing.Size(41, 13);
             this.label2.TabIndex = 11;
             this.label2.Text = "10 Sek";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(724, 753);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(543, 612);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(50, 17);
+            this.label3.Size = new System.Drawing.Size(39, 13);
             this.label3.TabIndex = 11;
             this.label3.Text = "30 Min";
             // 
@@ -306,9 +296,9 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(792, 784);
+            this.ClientSize = new System.Drawing.Size(589, 654);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -321,7 +311,6 @@
             this.Controls.Add(this.button_Webclient_Request);
             this.Controls.Add(this.textBox_response);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form1";

@@ -77,27 +77,21 @@ namespace httprequesttests
             public string balance { get; set; }
             public string followers { get; set; }
             public string sells { get; set; }
-            public string ratings { get; set; }
-            public string comments { get; set; }
-            public string messages { get; set; }
+            public string unreadmessages { get; set; }
 
-            public headerdata(string balance, string followers, string sells, string ratings, string comments, string messages)
+            public headerdata(string balance, string followers, string sells, string unreadmessages)
             {
                 this.balance = balance;
                 this.followers = followers;
                 this.sells = sells;
-                this.ratings = ratings;
-                this.comments = comments;
-                this.messages = messages;
+                this.unreadmessages = unreadmessages;
             }
             public headerdata()
             {
                 this.balance = "";
                 this.followers = "";
                 this.sells = "";
-                this.ratings = "";
-                this.comments = "";
-                this.messages = "";
+                this.unreadmessages = "";
             }
 
             internal void clear()
@@ -105,9 +99,7 @@ namespace httprequesttests
                 this.balance = "";
                 this.followers = "";
                 this.sells = "";
-                this.ratings = "";
-                this.comments = "";
-                this.messages = "";
+                this.unreadmessages = "";
             }
         }
         
@@ -227,7 +219,7 @@ namespace httprequesttests
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            saveStatetoXML(new accountdata(new headerdata(), referencepatdataList));
+            saveStatetoXML(new accountdata(referenceheaderdata, referencepatdataList));
 
             Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath);
             //config.AppSettings.Settings.Remove("myCookie");
@@ -329,6 +321,9 @@ namespace httprequesttests
         private void fillcurrentheaderdata()
         {
             //TODO:
+
+            currentheaderdata.clear();
+
             string headerpage = client.DownloadString(dashboardURL);
 
             HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
@@ -336,9 +331,21 @@ namespace httprequesttests
 
             var values = doc.DocumentNode.SelectSingleNode("//div[@class='col-xs-12 col-sm-12 col-md-12 col-lg-12 dashboard']")
                 .Descendants("div").Where(div => div.Descendants("div").Count()<1).Select(div => div.InnerText.Trim()).ToList();
-                
 
-            currentheaderdata.clear();
+            for (int i = 0; i < values.Count; i++)
+            {
+                if (values[i].Equals("Kontostand")) currentheaderdata.balance = values[i + 1];
+                if (values[i].Equals("Verkäufe insgesamt")) currentheaderdata.sells = values[i + 1];
+                if (values[i].Equals("Abonnenten")) currentheaderdata.followers = values[i + 1];
+            }
+
+            var values2 = doc.DocumentNode.SelectSingleNode("//table[@class='table']")
+                .Descendants("span").Select(span => span.InnerText.Trim()).ToList();
+
+            for (int i = 0; i < values2.Count; i++)
+            {
+                if (values2[i].Equals("Benachrichtigungen (alle / ungelesen)")) currentheaderdata.unreadmessages = values2[i + 2];
+            }
 
         }
 
@@ -359,6 +366,12 @@ namespace httprequesttests
                 showdata(currentheaderdata,currentpatdataList);
             }
 
+            //neuer header ist fürs nächste mal die referenz
+            referenceheaderdata.balance = currentheaderdata.balance;
+            referenceheaderdata.sells = currentheaderdata.sells;
+            referenceheaderdata.followers = currentheaderdata.followers;
+            referenceheaderdata.unreadmessages = currentheaderdata.unreadmessages;
+
 
             //neue Liste ist fürs nächte mal die referenz
             referencepatdataList.Clear();
@@ -375,39 +388,27 @@ namespace httprequesttests
             bool changeshappened = false;
 
             // Änderungen prüfen und ggf. flag setzen
-            if (newheader.sells.Equals(oldheader.sells))
+            if (!newheader.sells.Equals(oldheader.sells))
             {
-                addNotificationToQueue(Timestamp(), "totalsells", "Die Anzahl der Verkäufe (Accountweit) ist von " + oldheader.sells + "' auf '" + newheader.sells + "' gestiegen.");
+                addNotificationToQueue(Timestamp(), "totalsells", "Die Anzahl der Verkäufe (Accountweit) ist von " + oldheader.sells + " auf " + newheader.sells + " gestiegen.");
                 changeshappened = true;
             }
-            if (newheader.balance.Equals(oldheader.balance))
+            if (!newheader.balance.Equals(oldheader.balance))
 
             {
-                addNotificationToQueue(Timestamp(), "balance", "Der Kontostand hat sich von " + oldheader.balance + "' auf '" + newheader.balance + "' geändert.");
-                changeshappened = true;
-            }
-
-            if (newheader.comments.Equals(oldheader.comments))
-            {
-                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Kommentare hat sich von " + oldheader.comments + "' auf '" + newheader.comments + "' geändert.");
+                addNotificationToQueue(Timestamp(), "balance", "Der Kontostand hat sich von " + oldheader.balance + " auf " + newheader.balance + " geändert.");
                 changeshappened = true;
             }
 
-            if (newheader.followers.Equals(oldheader.followers))
+            if (!newheader.followers.Equals(oldheader.followers))
             {
-                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Follower hat sich von " + oldheader.followers + "' auf '" + newheader.followers + "' geändert.");
+                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Follower hat sich von " + oldheader.followers + " auf " + newheader.followers + " geändert.");
                 changeshappened = true;
             }
 
-            if (newheader.ratings.Equals(oldheader.ratings))
+            if (!newheader.unreadmessages.Equals(oldheader.unreadmessages))
             {
-                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Bewertungen (Accountweit) hat sich von " + oldheader.ratings + "' auf '" + newheader.ratings + "' geändert.");
-                changeshappened = true;
-            }
-
-            if (newheader.messages.Equals(oldheader.messages))
-            {
-                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Messages hat sich von " + oldheader.messages + "' auf '" + newheader.messages + "' geändert.");
+                addNotificationToQueue(Timestamp(), "comments", "Die Anzahl der Messages hat sich von " + oldheader.unreadmessages + " auf " + newheader.unreadmessages + " geändert.");
                 changeshappened = true;
             }
 
@@ -649,12 +650,12 @@ namespace httprequesttests
                 if (this.WindowState == FormWindowState.Minimized)
                 {
                     this.Show();
-                    //this.WindowState = FormWindowState.Normal;
+                    this.WindowState = FormWindowState.Normal;
                 }
                 else
                 {
                     this.Hide();
-                    //this.WindowState = FormWindowState.Minimized;
+                    this.WindowState = FormWindowState.Minimized;
                 }
             }
 
