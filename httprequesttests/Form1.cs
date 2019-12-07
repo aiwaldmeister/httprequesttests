@@ -391,25 +391,25 @@ namespace httprequesttests
             // Änderungen prüfen und ggf. flag setzen
             if (!newheader.sells.Equals(oldheader.sells))
             {
-                addNotificationToQueue(Timestamp(), "totalsells", oldheader.sells, newheader.sells, "Die Anzahl der Verkäufe (Accountweit) ist von " + oldheader.sells + " auf " + newheader.sells + " gestiegen.");
+                addNotificationToQueue(Timestamp(), "Account", "totalsells", oldheader.sells, newheader.sells, "Die Anzahl der Verkäufe (Accountweit) ist von " + oldheader.sells + " auf " + newheader.sells + " gestiegen.");
                 changeshappened = true;
             }
             if (!newheader.balance.Equals(oldheader.balance))
 
             {
-                addNotificationToQueue(Timestamp(), "balance", oldheader.balance, newheader.balance, "Der Kontostand hat sich von " + oldheader.balance + " auf " + newheader.balance + " geändert.");
+                addNotificationToQueue(Timestamp(), "Account", "balance", oldheader.balance, newheader.balance, "Der Kontostand hat sich von " + oldheader.balance + " auf " + newheader.balance + " geändert.");
                 changeshappened = true;
             }
 
             if (!newheader.followers.Equals(oldheader.followers))
             {
-                addNotificationToQueue(Timestamp(), "followers", oldheader.followers, newheader.followers, "Die Anzahl der Follower hat sich von " + oldheader.followers + " auf " + newheader.followers + " geändert.");
+                addNotificationToQueue(Timestamp(), "Account", "followers", oldheader.followers, newheader.followers, "Die Anzahl der Follower hat sich von " + oldheader.followers + " auf " + newheader.followers + " geändert.");
                 changeshappened = true;
             }
 
             if (!newheader.unreadmessages.Equals(oldheader.unreadmessages))
             {
-                addNotificationToQueue(Timestamp(), "unreadmessages", oldheader.unreadmessages, newheader.unreadmessages, "Die Anzahl der Messages hat sich von " + oldheader.unreadmessages + " auf " + newheader.unreadmessages + " geändert.");
+                addNotificationToQueue(Timestamp(), "Account", "unreadmessages", oldheader.unreadmessages, newheader.unreadmessages, "Die Anzahl der Messages hat sich von " + oldheader.unreadmessages + " auf " + newheader.unreadmessages + " geändert.");
                 changeshappened = true;
             }
 
@@ -430,37 +430,37 @@ namespace httprequesttests
 
                         if (!n.name.Equals(o.name))
                         {
-                            addNotificationToQueue(Timestamp(), "name", o.name, n.name, "Der name von Pattern '" + o.name + "' wurde zu '" + n.name + "' geändert.");
+                            addNotificationToQueue(Timestamp(), o.name, "name", o.name, n.name, "Der name von Pattern '" + o.name + "' wurde zu '" + n.name + "' geändert.");
                             changeshappened = true;
                         }
 
                         if (!n.views.Equals(o.views))
                         {
-                            addNotificationToQueue(Timestamp(), "views", o.views, n.views, "Die Anzahl der Views auf " + n.name + " ist von " + o.views + " auf " + n.views + " gestiegen.");
+                            addNotificationToQueue(Timestamp(), o.name, "views", o.views, n.views, "Die Anzahl der Views auf " + n.name + " ist von " + o.views + " auf " + n.views + " gestiegen.");
                             changeshappened = true;
                         }
 
                         if (!n.sells.Equals(o.sells))
                         {
-                            addNotificationToQueue(Timestamp(), "sells", o.sells, n.sells,  "Die Anzahl der Verkäufe auf " + n.name + " ist von " + o.sells + " auf " + n.sells + " gestiegen.");
+                            addNotificationToQueue(Timestamp(), o.name, "sells", o.sells, n.sells,  "Die Anzahl der Verkäufe auf " + n.name + " ist von " + o.sells + " auf " + n.sells + " gestiegen.");
                             changeshappened = true;
                         }
 
                         if (!n.wishlists.Equals(o.wishlists))
                         {
-                            addNotificationToQueue(Timestamp(), "wishlists", o.wishlists, n.wishlists,  "Die Anzahl der Wunschlisten auf " + n.name + " hat sich von " + o.wishlists + " auf " + n.wishlists + " geändert.");
+                            addNotificationToQueue(Timestamp(), o.name, "wishlists", o.wishlists, n.wishlists,  "Die Anzahl der Wunschlisten auf " + n.name + " hat sich von " + o.wishlists + " auf " + n.wishlists + " geändert.");
                             changeshappened = true;
                         }
 
                         if (!n.ratings.Equals(o.ratings))
                         {
-                            addNotificationToQueue(Timestamp(), "ratings", o.ratings, n.ratings, "Die Anzahl der Bewertungen auf " + n.name + " ist von " + o.ratings + " auf " + n.ratings + " gestiegen.");
+                            addNotificationToQueue(Timestamp(), o.name, "ratings", o.ratings, n.ratings, "Die Anzahl der Bewertungen auf " + n.name + " ist von " + o.ratings + " auf " + n.ratings + " gestiegen.");
                             changeshappened = true;
                         }
 
                         if (!n.score.Equals(o.score))
                         {
-                            addNotificationToQueue(Timestamp(), "score", o.score, n.score, "Die Bewertung von " + n.name + " hat sich von " + o.score + " auf " + n.score + " geändert.");
+                            addNotificationToQueue(Timestamp(), o.name, "score", o.score, n.score, "Die Bewertung von " + n.name + " hat sich von " + o.score + " auf " + n.score + " geändert.");
                             changeshappened = true;
                         }
 
@@ -498,7 +498,7 @@ namespace httprequesttests
                   CultureInfo.CreateSpecificCulture("de-DE"));
         }
 
-        private void addNotificationToQueue(string timestamp, string type, string oldvalue, string newvalue ,string message)
+        private void addNotificationToQueue(string timestamp, string name, string type, string oldvalue, string newvalue ,string message)
         {
            
 
@@ -512,6 +512,34 @@ namespace httprequesttests
             {
                 //Ausgabe in der Textbox
                 textBox_Alerts.AppendText(timestamp + ": " + Environment.NewLine + message + Environment.NewLine + Environment.NewLine);
+                string direction = "->";
+
+                if (!type.Equals(name))
+                {
+                    float oldfloat = 0;
+                    float newfloat = 0;
+
+                    float.TryParse(oldvalue, out oldfloat);
+                    float.TryParse(newvalue, out newfloat);
+
+                    if (newfloat < oldfloat)
+                    {
+                        direction = "^";
+                    }
+                    if (newfloat > oldfloat)
+                    {
+                        direction = "v";
+                    }
+                }
+
+                ListViewItem item = new ListViewItem();
+                item.SubItems.Add(timestamp);
+                item.SubItems.Add(name);
+                item.SubItems.Add(type);
+                item.SubItems.Add(oldvalue);
+                item.SubItems.Add(direction);
+                item.SubItems.Add(newvalue);
+
             }
 
             if (!timer_notifications.Enabled)
@@ -574,6 +602,7 @@ namespace httprequesttests
         {
             textBox_Alerts.Clear();
             notificationQueue.Clear();
+            listView1.Clear();
             //notificationQueue.Add(new notification("10000", "asdf", "asdfasdf"));
             //showNotification(new notification("10000","asdf","asdfasdf"));
             //ToastNotificationManager.CreateToastNotifier("MyApplicationId").Show(toast);
