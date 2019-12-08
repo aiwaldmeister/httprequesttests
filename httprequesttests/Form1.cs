@@ -361,7 +361,16 @@ namespace httprequesttests
             fillcurrentheaderdata();
 
             //Compare new header and patterndata to references
-            bool changes = ComparepatdataLists(currentpatdataList, referencepatdataList) || Compareheaders(currentheaderdata,referenceheaderdata);
+            bool changes = false;
+            if (ComparepatdataLists(currentpatdataList, referencepatdataList))
+            {
+                changes = true;
+            }
+            if (Compareheaders(currentheaderdata, referenceheaderdata))
+            {
+                changes = true;
+            }
+
             if (changes)
             {
                 showdata(currentheaderdata,currentpatdataList);
