@@ -205,7 +205,7 @@ namespace httprequesttests
 
             timer_autorefresh.Enabled = true;
             button_Timer_Toggle.Text = "Stop Tracking";
-            listView1.Clear();
+            listView1.Items.Clear();
             refresh();
 
         }
@@ -494,7 +494,7 @@ namespace httprequesttests
 
         public static String Timestamp()
         {
-            return DateTime.Now.ToString("F",
+            return DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss",
                   CultureInfo.CreateSpecificCulture("de-DE"));
         }
 
@@ -512,7 +512,7 @@ namespace httprequesttests
             {
                 //Ausgabe in der Textbox
                 textBox_Alerts.AppendText(timestamp + ": " + Environment.NewLine + message + Environment.NewLine + Environment.NewLine);
-                string direction = "->";
+                string direction = "è";
 
                 if (!type.Equals(name))
                 {
@@ -521,24 +521,41 @@ namespace httprequesttests
 
                     float.TryParse(oldvalue, out oldfloat);
                     float.TryParse(newvalue, out newfloat);
-
-                    if (newfloat < oldfloat)
-                    {
-                        direction = "^";
-                    }
+                    //è = ->
+                    //ì = ^
+                    //î = v
                     if (newfloat > oldfloat)
                     {
-                        direction = "v";
+                        direction = "ì";
+                    }
+                    if (newfloat < oldfloat)
+                    {
+                        direction = "î";
                     }
                 }
 
-                ListViewItem item = new ListViewItem();
+                ListViewItem item = new ListViewItem(type);
+                item.ImageKey = type;
+                item.UseItemStyleForSubItems = false;
+
                 item.SubItems.Add(timestamp);
                 item.SubItems.Add(name);
-                item.SubItems.Add(type);
                 item.SubItems.Add(oldvalue);
                 item.SubItems.Add(direction);
                 item.SubItems.Add(newvalue);
+
+                item.SubItems[4].Font = new System.Drawing.Font( "Wingdings",12);
+                if (direction.Equals("ì"))
+                {
+                    item.SubItems[4].ForeColor = System.Drawing.Color.DeepSkyBlue;
+                }
+                if (direction.Equals("î"))
+                {
+                    item.SubItems[4].ForeColor = System.Drawing.Color.OrangeRed;
+                }
+
+                listView1.Items.Add(item);
+                
 
             }
 
@@ -602,7 +619,7 @@ namespace httprequesttests
         {
             textBox_Alerts.Clear();
             notificationQueue.Clear();
-            listView1.Clear();
+            listView1.Items.Clear();
             //notificationQueue.Add(new notification("10000", "asdf", "asdfasdf"));
             //showNotification(new notification("10000","asdf","asdfasdf"));
             //ToastNotificationManager.CreateToastNotifier("MyApplicationId").Show(toast);
