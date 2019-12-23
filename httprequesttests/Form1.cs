@@ -511,8 +511,13 @@ namespace httprequesttests
                     pat.score);
             }
 
-            //TODO
             //Display Accountwide data
+            textBox_headerdata.Clear();
+            textBox_headerdata.AppendText("Kontostand: " + head.balance + "\r\n");
+            textBox_headerdata.AppendText("Follower: " + head.followers + "\r\n");
+            textBox_headerdata.AppendText("Verkäufe: " + head.sells + "\r\n");
+            textBox_headerdata.AppendText("Ungelesene Nachrichten: " + head.unreadmessages + "\r\n");
+            textBox_headerdata.AppendText("Kommentare: " + head.comments);
 
         }
 
@@ -590,6 +595,8 @@ namespace httprequesttests
             {
                 timer_notifications.Enabled = true;
             }
+
+            button_ClearMessages.Text = "Meldungen leeren ("+ notificationQueue.Count +")";
         }
 
         private void showNotification(notification notification)
@@ -611,10 +618,13 @@ namespace httprequesttests
             {
                 showNotification(notificationQueue.First());
                 notificationQueue.Remove(notificationQueue.First());
+                button_ClearMessages.Text = "Meldungen leeren (" + notificationQueue.Count + ")";
+
             }
             else
             {
                 timer_notifications.Enabled = false;
+                button_ClearMessages.Text = "Meldungen leeren";
             }
         }
 

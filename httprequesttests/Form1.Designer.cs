@@ -81,6 +81,7 @@
             this.header_direction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.header_newvalue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.eventicons = new System.Windows.Forms.ImageList(this.components);
+            this.textBox_headerdata = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.DG1)).BeginInit();
             this.contextMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
@@ -118,11 +119,11 @@
             this.wishlists,
             this.ratings,
             this.Durchschnitt});
-            this.DG1.Location = new System.Drawing.Point(600, 11);
+            this.DG1.Location = new System.Drawing.Point(600, 92);
             this.DG1.Name = "DG1";
             this.DG1.ReadOnly = true;
             this.DG1.RowHeadersVisible = false;
-            this.DG1.Size = new System.Drawing.Size(570, 747);
+            this.DG1.Size = new System.Drawing.Size(570, 666);
             this.DG1.TabIndex = 4;
             // 
             // number
@@ -397,11 +398,20 @@
             this.eventicons.Images.SetKeyName(9, "followers");
             this.eventicons.Images.SetKeyName(10, "comments");
             // 
+            // textBox_headerdata
+            // 
+            this.textBox_headerdata.Location = new System.Drawing.Point(600, 12);
+            this.textBox_headerdata.Multiline = true;
+            this.textBox_headerdata.Name = "textBox_headerdata";
+            this.textBox_headerdata.Size = new System.Drawing.Size(567, 74);
+            this.textBox_headerdata.TabIndex = 14;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 771);
+            this.ClientSize = new System.Drawing.Size(584, 771);
+            this.Controls.Add(this.textBox_headerdata);
             this.Controls.Add(this.listView1);
             this.Controls.Add(this.trackBar1);
             this.Controls.Add(this.label3);
@@ -467,6 +477,7 @@
         private System.Windows.Forms.ColumnHeader header_newvalue;
         private System.Windows.Forms.ColumnHeader header_name;
         private System.Windows.Forms.ColumnHeader header_time;
+        private System.Windows.Forms.TextBox textBox_headerdata;
     }
 }
 
