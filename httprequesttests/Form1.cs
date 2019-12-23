@@ -167,7 +167,7 @@ namespace httprequesttests
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {
+        {           
             myPW = ConfigurationManager.AppSettings["myPW"];
             myUsername = ConfigurationManager.AppSettings["myUsername"];
             int intervall = 10000;
@@ -218,7 +218,8 @@ namespace httprequesttests
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
+            //this.WindowState = FormWindowState.Minimized;
+            this.Hide();
             e.Cancel= preventFormClosing;
             preventFormClosing = true;
 
@@ -726,8 +727,9 @@ namespace httprequesttests
 
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Normal;
+            //this.WindowState = FormWindowState.Normal;
             this.Show();
+            this.BringToFront();
         }
 
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
@@ -738,15 +740,16 @@ namespace httprequesttests
             }
             if (e.Button == MouseButtons.Left)
             {
-                if (this.WindowState == FormWindowState.Minimized)
+                if (!this.Visible)
                 {
                     this.Show();
-                    this.WindowState = FormWindowState.Normal;
+                    this.BringToFront();
+                    //this.WindowState = FormWindowState.Normal;
                 }
                 else
                 {
                     this.Hide();
-                    this.WindowState = FormWindowState.Minimized;
+                    //this.WindowState = FormWindowState.Minimized;
                 }
             }
 
