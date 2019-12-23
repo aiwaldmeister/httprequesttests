@@ -657,6 +657,7 @@ namespace httprequesttests
             textBox_Alerts.Clear();
             notificationQueue.Clear();
             listView1.Items.Clear();
+            button_ClearMessages.Text = "Meldungen leeren";
             //notificationQueue.Add(new notification("10000", "asdf", "asdfasdf"));
             //showNotification(new notification("10000","asdf","asdfasdf"));
             //ToastNotificationManager.CreateToastNotifier("MyApplicationId").Show(toast);

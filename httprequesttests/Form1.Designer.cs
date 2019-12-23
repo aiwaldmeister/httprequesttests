@@ -388,15 +388,15 @@
             this.eventicons.TransparentColor = System.Drawing.Color.Transparent;
             this.eventicons.Images.SetKeyName(0, "name");
             this.eventicons.Images.SetKeyName(1, "unreadmessages");
-            this.eventicons.Images.SetKeyName(2, "sells");
-            this.eventicons.Images.SetKeyName(3, "wishlists");
-            this.eventicons.Images.SetKeyName(4, "totalsells");
-            this.eventicons.Images.SetKeyName(5, "score");
-            this.eventicons.Images.SetKeyName(6, "ratings");
-            this.eventicons.Images.SetKeyName(7, "views");
-            this.eventicons.Images.SetKeyName(8, "followers");
-            this.eventicons.Images.SetKeyName(9, "balance");
-            this.eventicons.Images.SetKeyName(10, "comments");
+            this.eventicons.Images.SetKeyName(2, "wishlists");
+            this.eventicons.Images.SetKeyName(3, "score");
+            this.eventicons.Images.SetKeyName(4, "views");
+            this.eventicons.Images.SetKeyName(5, "followers");
+            this.eventicons.Images.SetKeyName(6, "balance");
+            this.eventicons.Images.SetKeyName(7, "comments");
+            this.eventicons.Images.SetKeyName(8, "ratings");
+            this.eventicons.Images.SetKeyName(9, "sells");
+            this.eventicons.Images.SetKeyName(10, "totalsells");
             // 
             // textBox_headerdata
             // 
