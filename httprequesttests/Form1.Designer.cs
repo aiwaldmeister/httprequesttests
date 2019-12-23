@@ -46,6 +46,7 @@
             System.Windows.Forms.ListViewItem listViewItem8 = new System.Windows.Forms.ListViewItem("", "followers");
             System.Windows.Forms.ListViewItem listViewItem9 = new System.Windows.Forms.ListViewItem("", "balance");
             System.Windows.Forms.ListViewItem listViewItem10 = new System.Windows.Forms.ListViewItem("", "name");
+            System.Windows.Forms.ListViewItem listViewItem11 = new System.Windows.Forms.ListViewItem("", "comments");
             this.textBox_response = new System.Windows.Forms.TextBox();
             this.button_Webclient_Request = new System.Windows.Forms.Button();
             this.DG1 = new System.Windows.Forms.DataGridView();
@@ -339,7 +340,8 @@
             listViewItem7,
             listViewItem8,
             listViewItem9,
-            listViewItem10});
+            listViewItem10,
+            listViewItem11});
             this.listView1.Location = new System.Drawing.Point(13, 11);
             this.listView1.Margin = new System.Windows.Forms.Padding(2);
             this.listView1.Name = "listView1";
@@ -393,6 +395,7 @@
             this.eventicons.Images.SetKeyName(7, "ratings");
             this.eventicons.Images.SetKeyName(8, "views");
             this.eventicons.Images.SetKeyName(9, "followers");
+            this.eventicons.Images.SetKeyName(10, "comments");
             // 
             // Form1
             // 
