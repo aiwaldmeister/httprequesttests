@@ -218,11 +218,9 @@ namespace httprequesttests
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //this.WindowState = FormWindowState.Minimized;
-            this.Hide();
-            e.Cancel= preventFormClosing;
+            hidetheForm();
+            e.Cancel = preventFormClosing;
             preventFormClosing = true;
-
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -697,10 +695,22 @@ namespace httprequesttests
             
         }
 
+        private void showtheForm()
+        {
+            this.WindowState = FormWindowState.Minimized;
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+        }
+
+        private void hidetheForm()
+        {
+            this.WindowState = FormWindowState.Minimized;
+            this.Hide();
+        }
+
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //this.Visible = true;
-            this.WindowState = FormWindowState.Normal;
+            showtheForm();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -727,9 +737,7 @@ namespace httprequesttests
 
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
         {
-            //this.WindowState = FormWindowState.Normal;
-            this.Show();
-            this.BringToFront();
+            showtheForm();
         }
 
         private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
@@ -740,16 +748,13 @@ namespace httprequesttests
             }
             if (e.Button == MouseButtons.Left)
             {
-                if (!this.Visible)
+                if (this.WindowState == FormWindowState.Minimized)
                 {
-                    this.Show();
-                    this.BringToFront();
-                    //this.WindowState = FormWindowState.Normal;
+                    showtheForm();
                 }
                 else
                 {
-                    this.Hide();
-                    //this.WindowState = FormWindowState.Minimized;
+                    hidetheForm();
                 }
             }
 
