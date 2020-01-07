@@ -764,5 +764,14 @@ namespace httprequesttests
         {
             showNotificationfromQueue();
         }
+
+        private void DG1_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
+        {
+            if (e.Column.Index != 1) //übersteuern des Vergleichs beim Sortieren für alle Spalten ausser der Namensspalte
+            {
+                e.SortResult = float.Parse(e.CellValue1.ToString()).CompareTo(float.Parse(e.CellValue2.ToString()));
+                e.Handled = true;//pass by the default sorting
+            }
+        }
     }
 }           
